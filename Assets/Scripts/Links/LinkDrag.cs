@@ -22,6 +22,12 @@ namespace Links
         public void OnDrag(PointerEventData eventData)
         {
             transform.position = eventData.position;
+            var hitGameObject = eventData.pointerCurrentRaycast.gameObject;
+            if (hitGameObject == null) return;
+            if (hitGameObject.CompareTag("DropZone"))
+            {
+                
+            }
         }
 
         public void OnEndDrag(PointerEventData eventData)
