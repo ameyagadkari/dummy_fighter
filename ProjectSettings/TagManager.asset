@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Link
   - DropZone
+  - Slot
   layers:
   - Default
   - TransparentFX
