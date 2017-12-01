@@ -1,0 +1,46 @@
+Name: Dummy Fighter;	
+
+Description:
+	Is a simple turn based game containing two scenes: Editor and Fight. 
+	Core gameplay is to program Dummy Fighter behavior by dragging and dropping icons in a UI Layout in the Editor scene, 
+	with following observation of the engagement in the Fight scene;
+	Each turn has two steps, representing states of the game actor. Each step lasts 0.5 seconds,
+	Idle lasts 1 second, but it's also two steps in game logic
+	There are five states: Idle, Attack, AttackReturn, Dodge, DodgeReturn, which have respective states in AnimationStateMachine; 
+	Combinations of states determine damage dealing and receiving in each state:
+	Idle - Idle: no damage done, no damage received;
+	Attack - Idle: doing the basic damage;
+	Attack - Dodge: no damage done, no damage received;
+	Attack - DodgeReturn: dealing doubled damage;
+	Attack - Attack: both the player and the opponent receiving triple damage;
+
+	There are four types of gameplay events: Think, Watch, Attack, Dodge. 
+	These events are linked to a chain. Events are executed one by one following the chain order by default, 
+	but links themselves might change execution order;
+	Think and Watch are correlated with the Idle state, Attack, and Dodge with respective states.
+	* When Think event is triggered, Read the next Link. 
+	Replace next Link with a Link of an index calculated based on a number of steps defined by respective event properties forward or backward on the chain.
+	* Watch event also controls the chain execution order. There's 50% chance to read the next opponent's chain event when triggered.
+	In case of success, the next event of player's chain will be a Link with an index calculated based on a number of steps defined by respective event properties forward or backward on the chain.
+	* Attack and Dodge on triggered, just run respective actions without changing the order.
+
+Editor Scene: 
+	ChainInspector GUI is a horizontally scrollable drop zone for elements from LinksLibrary. 
+	The Link is UI of an object controlling respective events of gameplay. 
+	When a Link is dropped on ChainInspector, in case of Watch or Think link, child GUI GoToDisplay shall set enabled.
+	GoToDisplay has three elements, labeled: "idle", "attack", "dodge". Click on that element should change its image color making it focused, 
+	and being focused make possible to change the number (0 by default) by clicking "+" and "-" icons on sides of LinksLibrary.
+	These manipulations shall set up respective chain transactions when the event will be triggered. 
+	If any another element is clicked, the focus will be lost and default color will be set.
+
+	On scene loaded, loading previous session data to ChainInspector.
+	Buttons: Fight, Close, Undo, Redo. 
+	On click Fight: save chain data in Streaming Assets folder (save), Load Fight Scene;
+	On click Close: save; close the app.
+	On click Undo, Redo: executes the multiple Undo/Redo functional.
+
+
+Fight Scene:
+	In this scene, we can see the result of manipulations in the Editor scene. There are two simple animated 3D assets representing the player and the opponent.
+	Damage is reflected on two progress bars on top of the screen. When starting animation is finished, the game is started. 
+	Click on button Replay restarts the scene, button Exit closes an application
