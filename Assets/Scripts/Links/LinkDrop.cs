@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Links
 {
@@ -14,7 +15,21 @@ namespace Links
 
         public void OnDrop(PointerEventData eventData)
         {
-            eventData.pointerDrag.transform.SetParent(_newParentTransform);
+            if (!eventData.pointerDrag.CompareTag("Link")) return;
+
+            var draggedGameObject = eventData.pointerDrag;
+            var originalParentTransform = draggedGameObject.transform.parent;
+            var originalName = draggedGameObject.name;
+            draggedGameObject.transform.SetParent(_newParentTransform);
+            draggedGameObject.GetComponent<LayoutElement>().enabled = true;
+            draggedGameObject.GetComponent<LinkDrag>().enabled = false;
+
+            var draggedGameObjectClone = Instantiate(draggedGameObject, originalParentTransform);
+            draggedGameObjectClone.name = originalName;
+            draggedGameObjectClone.GetComponent<LayoutElement>().enabled = false;
+            draggedGameObjectClone.GetComponent<LinkDrag>().enabled = true;
+            draggedGameObjectClone.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            draggedGameObjectClone.transform.SetSiblingIndex((int)draggedGameObjectClone.GetComponent<LinkInfo>().LinkTypeName);
         }
     }
 }
