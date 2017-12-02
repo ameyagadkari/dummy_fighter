@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Links
@@ -39,7 +40,7 @@ namespace Links
                     rectTransform.offsetMin = Vector2.zero;
                     rectTransform.offsetMax = Vector2.zero;
                 }
-                LinksManager.Instance.InUse.Links.Push(draggedGameObject.transform);
+                LinksManager.Instance.AddNewLink(draggedGameObject.transform.GetSiblingIndex(), draggedGameObject.transform);
             }
 
             // Re-create the link in the link library
