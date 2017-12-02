@@ -9,6 +9,7 @@ namespace Links
 
         public LinkType LinkTypeName;
 
+        // Used for quick access to respective behavior scripts 
         [HideInInspector]
         public CanvasGroup CanvasGroupScript;
         [HideInInspector]

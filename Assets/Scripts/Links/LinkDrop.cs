@@ -26,6 +26,7 @@ namespace Links
                 draggedGameObject.transform.SetParent(_newParentTransform);
                 draggedGameObject.transform.SetSiblingIndex(LinkDrag.DummySlotTransform.GetSiblingIndex());
                 LinkDrag.DummySlotTransform.gameObject.SetActive(false);
+                LinkDrag.LinkTransformsInChainInspector = null;
                 var linkInfo = draggedGameObject.GetComponent<LinkInfo>();
                 linkInfo.LayoutElementScript.enabled = true;
                 linkInfo.LinkDragScript.enabled = false;

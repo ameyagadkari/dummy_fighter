@@ -15,6 +15,15 @@ namespace Links
                 return _dummySlotTransform ?? (_dummySlotTransform = GameObject.FindGameObjectWithTag("Slot").transform);
             }
         }
+        private static Transform[] _linkTransformsInChainInspector;
+        public static Transform[] LinkTransformsInChainInspector
+        {
+            get
+            {
+                return _linkTransformsInChainInspector ?? (_linkTransformsInChainInspector = DummySlotTransform.parent.GetComponentsInChildren<Transform>());
+            }
+            set { _linkTransformsInChainInspector = value; }
+        }
 
         private void Start()
         {
@@ -42,13 +51,11 @@ namespace Links
                 {
                     DummySlotTransform.gameObject.SetActive(true);
                     DummySlotTransform.SetAsLastSibling();
-                    var linkTransformsInChainInspector =
-                        DummySlotTransform.parent.GetComponentsInChildren<Transform>();
-                    var length = linkTransformsInChainInspector.Length - 1;
+                    var length = LinkTransformsInChainInspector.Length - 1;
                     for (var i = 0; i < length; i++)
                     {
-                        if (!(transform.position.x < linkTransformsInChainInspector[i].position.x)) continue;
-                        DummySlotTransform.SetSiblingIndex(linkTransformsInChainInspector[i].GetSiblingIndex());
+                        if (!(transform.position.x < LinkTransformsInChainInspector[i].position.x)) continue;
+                        DummySlotTransform.SetSiblingIndex(LinkTransformsInChainInspector[i].GetSiblingIndex());
                         break;
                     }
                 }
