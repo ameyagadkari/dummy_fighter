@@ -20,12 +20,10 @@ namespace Links
         public InCase InCaseValues;
 
         // Used for quick access to respective behavior scripts 
-        [HideInInspector]
-        public CanvasGroup CanvasGroupScript;
-        [HideInInspector]
-        public LayoutElement LayoutElementScript;
-        [HideInInspector]
-        public LinkDrag LinkDragScript;
+
+        public CanvasGroup CanvasGroupScript { get; private set; }
+        public LayoutElement LayoutElementScript { get; private set; }
+        public LinkDrag LinkDragScript { get; private set; }
 
         private void Awake()
         {
