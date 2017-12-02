@@ -9,6 +9,16 @@ namespace Links
 
         public LinkType LinkTypeName;
 
+        [System.Serializable]
+        public struct InCase
+        {
+            public byte Idle;
+            public byte Attack;
+            public byte Dodge;
+        }
+
+        public InCase InCaseValues;
+
         // Used for quick access to respective behavior scripts 
         [HideInInspector]
         public CanvasGroup CanvasGroupScript;
