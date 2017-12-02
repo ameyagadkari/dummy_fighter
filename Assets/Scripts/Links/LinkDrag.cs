@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Links
@@ -15,12 +16,18 @@ namespace Links
                 return _dummySlotTransform ?? (_dummySlotTransform = GameObject.FindGameObjectWithTag("Slot").transform);
             }
         }
-        private static Transform[] _linkTransformsInChainInspector;
-        public static Transform[] LinkTransformsInChainInspector
+        private static List<Transform> _linkTransformsInChainInspector;
+        public static List<Transform> LinkTransformsInChainInspector
         {
             get
             {
-                return _linkTransformsInChainInspector ?? (_linkTransformsInChainInspector = DummySlotTransform.parent.GetComponentsInChildren<Transform>());
+                if (_linkTransformsInChainInspector != null) return _linkTransformsInChainInspector;
+                _linkTransformsInChainInspector = new List<Transform>();
+                foreach (Transform transform in DummySlotTransform.parent.transform)
+                {
+                    _linkTransformsInChainInspector.Add(transform);
+                }
+                return _linkTransformsInChainInspector;
             }
             set { _linkTransformsInChainInspector = value; }
         }
@@ -40,6 +47,7 @@ namespace Links
         public void OnDrag(PointerEventData eventData)
         {
             transform.position = eventData.position;
+
             var hitGameObject = eventData.pointerCurrentRaycast.gameObject;
             if (hitGameObject == null)
             {
@@ -47,20 +55,23 @@ namespace Links
             }
             else
             {
-                if (hitGameObject.CompareTag("DropZone"))
+                var rayCastResults = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(eventData, rayCastResults);
+                foreach (var rayCastResult in rayCastResults)
                 {
-                    DummySlotTransform.gameObject.SetActive(true);
-                    DummySlotTransform.SetAsLastSibling();
-                    var length = LinkTransformsInChainInspector.Length - 1;
-                    for (var i = 0; i < length; i++)
+                    if (rayCastResult.gameObject.CompareTag("DropZone"))
                     {
-                        if (!(transform.position.x < LinkTransformsInChainInspector[i].position.x)) continue;
-                        DummySlotTransform.SetSiblingIndex(LinkTransformsInChainInspector[i].GetSiblingIndex());
+                        DummySlotTransform.gameObject.SetActive(true);
+                        DummySlotTransform.SetAsLastSibling();
+                        var length = LinkTransformsInChainInspector.Count - 1;
+                        for (var i = 0; i < length; i++)
+                        {
+                            if (!(transform.position.x < LinkTransformsInChainInspector[i].position.x)) continue;
+                            DummySlotTransform.SetSiblingIndex(LinkTransformsInChainInspector[i].GetSiblingIndex());
+                            break;
+                        }
                         break;
                     }
-                }
-                else
-                {
                     DummySlotTransform.gameObject.SetActive(false);
                 }
             }

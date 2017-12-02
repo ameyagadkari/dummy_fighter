@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Links
 {
@@ -30,6 +29,7 @@ namespace Links
                 var linkInfo = draggedGameObject.GetComponent<LinkInfo>();
                 linkInfo.LayoutElementScript.enabled = true;
                 linkInfo.LinkDragScript.enabled = false;
+                linkInfo.CanvasGroupScript.blocksRaycasts = true;
                 if (linkInfo.LinkTypeName == LinkInfo.LinkType.Think ||
                     linkInfo.LinkTypeName == LinkInfo.LinkType.Watch)
                 {
@@ -48,7 +48,6 @@ namespace Links
                 var linkInfo = draggedGameObjectClone.GetComponent<LinkInfo>();
                 linkInfo.LayoutElementScript.enabled = false;
                 linkInfo.LinkDragScript.enabled = true;
-                linkInfo.CanvasGroupScript.blocksRaycasts = true;
                 draggedGameObjectClone.transform.SetSiblingIndex((int)linkInfo.LinkTypeName);
                 if (linkInfo.LinkTypeName == LinkInfo.LinkType.Think ||
                     linkInfo.LinkTypeName == LinkInfo.LinkType.Watch)
