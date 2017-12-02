@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 namespace Links
@@ -9,12 +10,21 @@ namespace Links
         private CanvasGroup _canvasGroup;
         private Vector3 _startPosition;
         private static Transform _dummySlotTransform;
+        private static Transform _dummySlotOriginalParentTransform;
         public static Transform DummySlotTransform
         {
             get
             {
-                return _dummySlotTransform ?? (_dummySlotTransform = GameObject.FindGameObjectWithTag("Slot").transform);
+                if (_dummySlotTransform != null) return _dummySlotTransform;
+                _dummySlotTransform = GameObject.FindGameObjectWithTag("Slot").transform;
+                _dummySlotOriginalParentTransform = _dummySlotTransform.parent;
+                return _dummySlotTransform;
             }
+        }
+        public static void EnableDummySlot(bool value)
+        {
+            DummySlotTransform.gameObject.SetActive(value);
+            DummySlotTransform.SetParent(value ? _dummySlotOriginalParentTransform : null);
         }
         private static List<Transform> _linkTransformsInChainInspector;
         public static List<Transform> LinkTransformsInChainInspector
@@ -23,6 +33,7 @@ namespace Links
             {
                 if (_linkTransformsInChainInspector != null) return _linkTransformsInChainInspector;
                 _linkTransformsInChainInspector = new List<Transform>();
+                Assert.IsNotNull(DummySlotTransform.parent, "Dummy slot's parent is not set");
                 foreach (Transform transform in DummySlotTransform.parent.transform)
                 {
                     _linkTransformsInChainInspector.Add(transform);
@@ -35,7 +46,7 @@ namespace Links
         private void Start()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
-            DummySlotTransform.gameObject.SetActive(false);
+            EnableDummySlot(false);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -51,7 +62,7 @@ namespace Links
             var hitGameObject = eventData.pointerCurrentRaycast.gameObject;
             if (hitGameObject == null)
             {
-                DummySlotTransform.gameObject.SetActive(false);
+                EnableDummySlot(false);
             }
             else
             {
@@ -61,9 +72,10 @@ namespace Links
                 {
                     if (rayCastResult.gameObject.CompareTag("DropZone"))
                     {
-                        DummySlotTransform.gameObject.SetActive(true);
+                        EnableDummySlot(true);
                         DummySlotTransform.SetAsLastSibling();
                         var length = LinkTransformsInChainInspector.Count - 1;
+                        Assert.IsTrue(length == LinksManager.Instance.InUse.Links.Count, "Links count mismatch");
                         for (var i = 0; i < length; i++)
                         {
                             if (!(transform.position.x < LinkTransformsInChainInspector[i].position.x)) continue;
@@ -72,7 +84,7 @@ namespace Links
                         }
                         break;
                     }
-                    DummySlotTransform.gameObject.SetActive(false);
+                    EnableDummySlot(false);
                 }
             }
         }

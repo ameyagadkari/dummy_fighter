@@ -24,7 +24,7 @@ namespace Links
             {
                 draggedGameObject.transform.SetParent(_newParentTransform);
                 draggedGameObject.transform.SetSiblingIndex(LinkDrag.DummySlotTransform.GetSiblingIndex());
-                LinkDrag.DummySlotTransform.gameObject.SetActive(false);
+                LinkDrag.EnableDummySlot(false);
                 LinkDrag.LinkTransformsInChainInspector = null;
                 var linkInfo = draggedGameObject.GetComponent<LinkInfo>();
                 linkInfo.LayoutElementScript.enabled = true;
@@ -39,6 +39,7 @@ namespace Links
                     rectTransform.offsetMin = Vector2.zero;
                     rectTransform.offsetMax = Vector2.zero;
                 }
+                LinksManager.Instance.InUse.Links.Push(draggedGameObject.transform);
             }
 
             // Re-create the link in the link library
