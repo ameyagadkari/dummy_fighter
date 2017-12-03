@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,20 +10,12 @@ namespace Links
 
         public LinkType LinkTypeName;
 
-        [StructLayout(LayoutKind.Explicit)]
         [Serializable]
         public struct InCase
         {
-            [FieldOffset(0)]
-            public byte Idle;
-            [FieldOffset(1)]
-            public byte Attack;
-            [FieldOffset(2)]
-            public byte Dodge;
-            [FieldOffset(3)]
-            public readonly byte UnusedByte;
-            [FieldOffset(0)]
-            public uint IntToWriteRead;
+            public int Idle;
+            public int Attack;
+            public int Dodge;
         }
 
         public InCase InCaseValues;

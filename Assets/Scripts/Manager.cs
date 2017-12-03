@@ -60,10 +60,11 @@ public class Manager : MonoBehaviour
                 var linkInfo = link.Item2.GetComponent<LinkInfo>();
                 streamWriter.WriteLine((byte)linkInfo.LinkTypeName);
                 streamWriter.WriteLine(link.Item1);
-                if (linkInfo.LinkTypeName == LinkInfo.LinkType.Think || linkInfo.LinkTypeName == LinkInfo.LinkType.Watch)
-                {
-                    streamWriter.WriteLine(linkInfo.InCaseValues.IntToWriteRead);
-                }
+                if (linkInfo.LinkTypeName != LinkInfo.LinkType.Think &&
+                    linkInfo.LinkTypeName != LinkInfo.LinkType.Watch) continue;
+                streamWriter.WriteLine(linkInfo.InCaseValues.Idle);
+                streamWriter.WriteLine(linkInfo.InCaseValues.Attack);
+                streamWriter.WriteLine(linkInfo.InCaseValues.Dodge);
             }
             streamWriter.Flush();
         }
@@ -87,9 +88,17 @@ public class Manager : MonoBehaviour
                 var inCaseValues = new LinkInfo.InCase();
                 if (linkType == LinkInfo.LinkType.Think || linkType == LinkInfo.LinkType.Watch)
                 {
-                    var inCaseValuesString = streamReader.ReadLine();
-                    Assert.IsNotNull(inCaseValuesString);
-                    inCaseValues.IntToWriteRead = uint.Parse(inCaseValuesString);
+                    var idle = streamReader.ReadLine();
+                    Assert.IsNotNull(idle);
+                    inCaseValues.Idle = int.Parse(idle);
+
+                    var attack = streamReader.ReadLine();
+                    Assert.IsNotNull(attack);
+                    inCaseValues.Attack = int.Parse(attack);
+
+                    var dodge = streamReader.ReadLine();
+                    Assert.IsNotNull(dodge);
+                    inCaseValues.Dodge = int.Parse(dodge);
                 }
                 ReCreateLink(linkType, siblingIndex, inCaseValues);
             }
