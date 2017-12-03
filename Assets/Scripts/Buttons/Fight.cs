@@ -22,6 +22,7 @@ namespace Buttons
         }
         private static void OnClickFight()
         {
+            Manager.Instance.SaveGame();
             SceneManager.LoadScene((int)Manager.SceneNames.Fight);
         }
     }

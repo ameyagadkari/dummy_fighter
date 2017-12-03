@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Buttons
@@ -9,7 +10,7 @@ namespace Buttons
 
         private void Awake()
         {
-            _button = GetComponent<Button>();      
+            _button = GetComponent<Button>();
         }
         private void OnEnable()
         {
@@ -21,6 +22,10 @@ namespace Buttons
         }
         private static void QuitApp()
         {
+            if (SceneManager.GetActiveScene().buildIndex == (int)Manager.SceneNames.Editor && !Application.isEditor)
+            {
+                Manager.Instance.SaveGame();
+            }
             Application.Quit();
         }
     }

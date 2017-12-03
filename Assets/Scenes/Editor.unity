@@ -246,6 +246,7 @@ GameObject:
   - component: {fileID: 62666517}
   - component: {fileID: 62666516}
   - component: {fileID: 62666515}
+  - component: {fileID: 62666518}
   m_Layer: 5
   m_Name: ButtonRedo
   m_TagString: Untagged
@@ -346,6 +347,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 62666513}
+--- !u!114 &62666518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 62666513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1028e32bb77bb584fad4e17a5444d80d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &73637215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1667,6 +1679,7 @@ GameObject:
   - component: {fileID: 1073861247}
   - component: {fileID: 1073861246}
   - component: {fileID: 1073861245}
+  - component: {fileID: 1073861248}
   m_Layer: 5
   m_Name: ButtonUndo
   m_TagString: Untagged
@@ -1767,6 +1780,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1073861243}
+--- !u!114 &1073861248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1073861243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a85affcb32307648a99fc05a2c36e3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1116796205
 Prefab:
   m_ObjectHideFlags: 0
