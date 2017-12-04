@@ -5,31 +5,45 @@ namespace Dummy
 {
     public class DummyController : MonoBehaviour
     {
-        private enum DummyStates : byte { Idle, Attack, Dodge }
+        public enum DummyStates : byte
+        {
+            Idle,
+            Attack,
+            Dodge
+        }
 
-        private DummyStates[] _dummyStates;
-        private int _currentStateNumber;
+        public DummyStates[] DummyStatesArray { get; private set; }
+        public int CurrentStateNumber { get; private set; }
         private Animator _animator;
         private static readonly int AttackTriggerId = Animator.StringToHash("Attack");
         private static readonly int DodgeTriggerId = Animator.StringToHash("Dodge");
         private static readonly int ReplayTriggerId = Animator.StringToHash("Replay");
+        private static readonly int LoseTriggerId = Animator.StringToHash("Lose");
+        private static readonly int WinTriggerId = Animator.StringToHash("Win");
+
         private void Start()
         {
             _animator = GetComponent<Animator>();
-            _currentStateNumber = 0;
+            CurrentStateNumber = 0;
         }
 
         public void ReplayGame()
         {
-            _currentStateNumber = 0;
+            CurrentStateNumber = 0;
+            Manager.Instance.ResetManager();
+            _animator.ResetTrigger(AttackTriggerId);
+            _animator.ResetTrigger(DodgeTriggerId);
+            _animator.ResetTrigger(LoseTriggerId);
+            _animator.ResetTrigger(WinTriggerId);
             _animator.SetTrigger(ReplayTriggerId);
         }
 
         private void SetNextState()
         {
-            if (_currentStateNumber >= _dummyStates.Length) return;
-            Debug.Log(transform.parent.name + "..." + _dummyStates[_currentStateNumber]);
-            switch (_dummyStates[_currentStateNumber])
+            if (CurrentStateNumber >= DummyStatesArray.Length) return;
+            Manager.Instance.HasGameStarted = true;
+            //print(transform.parent.name + " ... " + DummyStatesArray[_currentStateNumber]);
+            switch (DummyStatesArray[CurrentStateNumber])
             {
                 case DummyStates.Idle:
                     break;
@@ -40,36 +54,41 @@ namespace Dummy
                     _animator.SetTrigger(DodgeTriggerId);
                     break;
             }
-            _currentStateNumber++;
+            CurrentStateNumber++;
+        }
+
+        public void SetWinLoseState(bool didWin)
+        {
+            _animator.SetTrigger(didWin ? WinTriggerId : LoseTriggerId);
         }
 
         public void ProcessLinks(ref LinkInfo[] player, ref LinkInfo[] enemy)
         {
-            _dummyStates = new DummyStates[player.Length];
+            DummyStatesArray = new DummyStates[player.Length];
             var length = player.Length;
             for (var i = 0; i < length; i++)
             {
                 switch (player[i].LinkTypeName)
                 {
                     case LinkInfo.LinkType.Think:
-                        _dummyStates[i] = DummyStates.Idle;
+                        DummyStatesArray[i] = DummyStates.Idle;
                         if (i < length - 1)
                         {
                             ProcessInCaseValues(i, length, player[i + 1].LinkTypeName, ref player);
                         }
                         break;
                     case LinkInfo.LinkType.Watch:
-                        _dummyStates[i] = DummyStates.Idle;
+                        DummyStatesArray[i] = DummyStates.Idle;
                         if (Random.value > 0.5f && i < length - 1)
                         {
                             ProcessInCaseValues(i, length, enemy[i + 1].LinkTypeName, ref player);
                         }
                         break;
                     case LinkInfo.LinkType.Attack:
-                        _dummyStates[i] = DummyStates.Attack;
+                        DummyStatesArray[i] = DummyStates.Attack;
                         break;
                     case LinkInfo.LinkType.Dodge:
-                        _dummyStates[i] = DummyStates.Dodge;
+                        DummyStatesArray[i] = DummyStates.Dodge;
                         break;
                 }
             }

@@ -1,5 +1,4 @@
-﻿using Dummy;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Buttons
@@ -7,14 +6,10 @@ namespace Buttons
     public class Replay : MonoBehaviour
     {
         private Button _button;
-        private DummyController _player;
-        private DummyController _enemy;
 
         private void Awake()
         {
             _button = GetComponent<Button>();
-            _player = GameObject.Find("Player").transform.GetChild(0).GetComponent<DummyController>();
-            _enemy = GameObject.Find("Enemy").transform.GetChild(0).GetComponent<DummyController>();
         }
 
         private void OnEnable()
@@ -27,10 +22,10 @@ namespace Buttons
             _button.onClick.RemoveAllListeners();
         }
 
-        private void OnClickReplay()
+        private static void OnClickReplay()
         {
-            _player.ReplayGame();
-            _enemy.ReplayGame();
+            Manager.Instance.Player.ReplayGame();
+            Manager.Instance.Enemy.ReplayGame();
         }
     }
 }

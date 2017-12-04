@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
 using Dummy;
 using Links;
 using UnityEngine;
@@ -11,6 +13,13 @@ public class Manager : MonoBehaviour
 {
     public enum SceneNames { Editor, Fight }
     public static Manager Instance => _instance ?? (_instance = FindObjectOfType<Manager>());
+    public DummyController Player;
+    public DummyController Enemy;
+    public bool HasGameStarted;
+    public bool HasGameFinished;
+
+    private DummyHealth _playerHealth;
+    private DummyHealth _enemyHealth;
 
     private static Manager _instance;
     private const string SaveFileNameWithExtensionWithPrecedingBlackSlash = @"\dummy_fighter.sav";
@@ -20,6 +29,35 @@ public class Manager : MonoBehaviour
     private const int TotalNumberOfLinks = 4;
     private GameObject[] _links;
     private LinkInfo[] _playerLinkInfoArray;
+    private bool _startCoroutine;
+    private bool _canDamageBeCalculated;
+    private int _currentStateNumber;
+
+    private readonly DamageMultipliers[,] _damageMultipliersMatrix =
+    {
+        { new DamageMultipliers(0),new DamageMultipliers(0x0100),new DamageMultipliers(0) },
+        { new DamageMultipliers(1),new DamageMultipliers(0x0303),new DamageMultipliers(0) },
+        { new DamageMultipliers(0),new DamageMultipliers(0),new DamageMultipliers(0) }
+    };
+
+    // C# unions
+    [StructLayout(LayoutKind.Explicit)]
+    public class DamageMultipliers
+    {
+        [FieldOffset(0)]
+        public readonly byte Player;
+
+        [FieldOffset(1)]
+        public readonly byte Enemy;
+
+        [FieldOffset(0)]
+        private readonly ushort Unused;
+
+        internal DamageMultipliers(ushort value)
+        {
+            Unused = value;
+        }
+    }
 
     private void Awake()
     {
@@ -50,6 +88,13 @@ public class Manager : MonoBehaviour
         SceneManager.sceneLoaded -= OnLevelLoadingFinished;
     }
 
+    private IEnumerator Timer(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        _canDamageBeCalculated = true;
+        _startCoroutine = true;
+    }
+
     private void OnLevelLoadingFinished(Scene scene, LoadSceneMode mode)
     {
         switch (scene.buildIndex)
@@ -58,9 +103,56 @@ public class Manager : MonoBehaviour
                 LoadGame();
                 break;
             case (int)SceneNames.Fight:
+                Player = GameObject.Find("Player").transform.GetChild(0).GetComponent<DummyController>();
+                Enemy = GameObject.Find("Enemy").transform.GetChild(0).GetComponent<DummyController>();
+                _playerHealth = GameObject.Find("PlayerHealthBar").GetComponent<DummyHealth>();
+                _enemyHealth = GameObject.Find("EnemyHealthBar").GetComponent<DummyHealth>();
                 InitializeActorControllers();
+                ResetManager();
                 break;
         }
+    }
+
+    public void ResetManager()
+    {
+        StopAllCoroutines();
+        HasGameStarted = false;
+        HasGameFinished = false;
+        _startCoroutine = true;
+        _canDamageBeCalculated = false;
+        _currentStateNumber = 0;
+        _playerHealth.ResetHealth();
+        _enemyHealth.ResetHealth();
+    }
+
+    private void Update()
+    {
+        if (HasGameFinished) return;
+        HasGameFinished = _playerHealth?.GetHealth() <= 0.0f || _enemyHealth?.GetHealth() <= 0.0f;
+        if (HasGameFinished)
+        {
+            Player.SetWinLoseState(_playerHealth.GetHealth() >= _enemyHealth.GetHealth());
+            Enemy.SetWinLoseState(_enemyHealth.GetHealth() >= _playerHealth.GetHealth());
+            return;
+        }
+        if (_canDamageBeCalculated && _currentStateNumber < Enemy.DummyStatesArray.Length)
+        {
+            _canDamageBeCalculated = false;
+            var damageMultipliers = _damageMultipliersMatrix[(int)Enemy.DummyStatesArray[_currentStateNumber], (int)Player.DummyStatesArray[_currentStateNumber]];
+            _enemyHealth.ApplyDamage(damageMultipliers.Enemy);
+            _playerHealth.ApplyDamage(damageMultipliers.Player);
+            _currentStateNumber++;
+        }
+        else if (Enemy != null && _currentStateNumber == Enemy.DummyStatesArray.Length && Enemy.CurrentStateNumber == Enemy.DummyStatesArray.Length && Player.CurrentStateNumber == Player.DummyStatesArray.Length)
+        {
+            Player.SetWinLoseState(_playerHealth.GetHealth() >= _enemyHealth.GetHealth());
+            Enemy.SetWinLoseState(_enemyHealth.GetHealth() >= _playerHealth.GetHealth());
+            _currentStateNumber++;
+            HasGameFinished = true;
+        }
+        if (!_startCoroutine || !HasGameStarted) return;
+        _startCoroutine = false;
+        StartCoroutine(Timer(1.0f));
     }
 
     public void SaveGame(bool fetchPlayerLinkInfo = false)
