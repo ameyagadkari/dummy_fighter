@@ -576,7 +576,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 958072608}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 877.37396, y: -489.65808, z: 0}
+  m_LocalPosition: {x: 877.163, y: -489.77582, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 176955168}
@@ -823,7 +823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ece8cf1b481feb489dbc37fe4955889, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _actorStates: 
 --- !u!1 &1382620204
 GameObject:
   m_ObjectHideFlags: 0
@@ -992,7 +991,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ece8cf1b481feb489dbc37fe4955889, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _actorStates: 
 --- !u!1 &1482382649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,8 +1102,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1732502248}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 320, y: 180, z: 0}
-  m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+  m_LocalPosition: {x: 346.5, y: 195, z: 0}
+  m_LocalScale: {x: 0.3610243, y: 0.3610243, z: 0.3610243}
   m_Children:
   - {fileID: 1235354128}
   - {fileID: 992162277}
@@ -1130,6 +1128,7 @@ GameObject:
   - component: {fileID: 1983817380}
   - component: {fileID: 1983817379}
   - component: {fileID: 1983817378}
+  - component: {fileID: 1983817381}
   m_Layer: 5
   m_Name: ButtonReplay
   m_TagString: Untagged
@@ -1144,7 +1143,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1983817376}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -820.2372, y: -489.65808, z: 0}
+  m_LocalPosition: {x: -820.04004, y: -489.77582, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 816926857}
@@ -1230,6 +1229,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1983817376}
+--- !u!114 &1983817381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1983817376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db848f3b8b84714408403a5855d845b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2059237653
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,6 @@ using UnityEngine.UI;
 public class Manager : MonoBehaviour
 {
     public enum SceneNames { Editor, Fight }
-
     public static Manager Instance => _instance ?? (_instance = FindObjectOfType<Manager>());
 
     private static Manager _instance;
@@ -65,7 +64,7 @@ public class Manager : MonoBehaviour
     }
 
     public void SaveGame(bool fetchPlayerLinkInfo = false)
-    {  
+    {
         if (File.Exists(_absoluteFilePath))
         {
             File.Delete(_absoluteFilePath);
