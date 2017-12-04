@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using Dummy;
 using Links;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
@@ -18,6 +20,7 @@ public class Manager : MonoBehaviour
     private string _absoluteFilePath;
     private const int TotalNumberOfLinks = 4;
     private GameObject[] _links;
+    private LinkInfo[] _playerLinkInfoArray;
 
     private void Awake()
     {
@@ -39,14 +42,30 @@ public class Manager : MonoBehaviour
         _links[3] = GameObject.Find("LinkDodge");
         Assert.IsNotNull(_links[3]);
     }
-
-    private void Start()
+    private void OnEnable()
     {
-        LoadGame();
+        SceneManager.sceneLoaded += OnLevelLoadingFinished;
+    }
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnLevelLoadingFinished;
     }
 
-    public void SaveGame()
+    private void OnLevelLoadingFinished(Scene scene, LoadSceneMode mode)
     {
+        switch (scene.buildIndex)
+        {
+            case (int)SceneNames.Editor:
+                LoadGame();
+                break;
+            case (int)SceneNames.Fight:
+                InitializeActorControllers();
+                break;
+        }
+    }
+
+    public void SaveGame(bool fetchPlayerLinkInfo = false)
+    {  
         if (File.Exists(_absoluteFilePath))
         {
             File.Delete(_absoluteFilePath);
@@ -55,6 +74,14 @@ public class Manager : MonoBehaviour
         {
             var linksArray = LinksManager.Instance.InUse.Links.ToArray();
             Array.Reverse(linksArray);
+            if (fetchPlayerLinkInfo)
+            {
+                _playerLinkInfoArray = new LinkInfo[linksArray.Length];
+                for (var i = 0; i < linksArray.Length; i++)
+                {
+                    _playerLinkInfoArray[i] = linksArray[i].Item2.GetComponent<LinkInfo>();
+                }
+            }
             foreach (var link in linksArray)
             {
                 var linkInfo = link.Item2.GetComponent<LinkInfo>();
@@ -70,7 +97,7 @@ public class Manager : MonoBehaviour
         }
     }
 
-    public void LoadGame()
+    private void LoadGame()
     {
         if (!File.Exists(_absoluteFilePath)) return;
         using (var streamReader = new StreamReader(_absoluteFilePath))
@@ -128,5 +155,29 @@ public class Manager : MonoBehaviour
             linkInfo.InCaseValues = inCaseValues;
         }
         LinksManager.Instance.AddNewLink(siblingIndex, linkGameObject.transform);
+    }
+
+    private void InitializeActorControllers()
+    {
+        var linksArray = LinksManager.Instance.InUse.Links.ToArray();
+        Array.Reverse(linksArray);
+        var length = linksArray.Length;
+        var enemyLinkInfoArray = new LinkInfo[length];
+        for (var i = 0; i < length; i++)
+        {
+            enemyLinkInfoArray[i] = LinkInfo.GetRandomLink();
+        }
+
+        // Process player's links
+        {
+            var dummyController = GameObject.Find("Player").transform.GetChild(0).GetComponent<DummyController>();
+            dummyController.ProcessLinks(ref _playerLinkInfoArray, ref enemyLinkInfoArray);
+        }
+
+        // Process enemy's links
+        {
+            var dummyController = GameObject.Find("Enemy").transform.GetChild(0).GetComponent<DummyController>();
+            dummyController.ProcessLinks(ref enemyLinkInfoArray, ref _playerLinkInfoArray);
+        }
     }
 }

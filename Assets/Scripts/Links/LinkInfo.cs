@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Links
@@ -10,7 +9,7 @@ namespace Links
 
         public LinkType LinkTypeName;
 
-        [Serializable]
+        [System.Serializable]
         public struct InCase
         {
             public int Idle;
@@ -19,6 +18,23 @@ namespace Links
         }
 
         public InCase InCaseValues;
+
+        // Random Link info generation
+        public static LinkInfo GetRandomLink()
+        {
+            // WARNING: Using new to prevent code repetition
+            var returnValue = new LinkInfo();
+            // !WARNING
+            returnValue.LinkTypeName = (LinkType)Random.Range(1, 5);
+            if (returnValue.LinkTypeName != LinkType.Think && returnValue.LinkTypeName != LinkType.Watch)
+            {
+                return returnValue;
+            }
+            returnValue.InCaseValues.Idle = Random.Range(int.MinValue, int.MaxValue);
+            returnValue.InCaseValues.Attack = Random.Range(int.MinValue, int.MaxValue);
+            returnValue.InCaseValues.Dodge = Random.Range(int.MinValue, int.MaxValue);
+            return returnValue;
+        }
 
         // Used for quick access to respective behavior scripts 
 
