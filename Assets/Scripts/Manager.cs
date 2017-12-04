@@ -23,8 +23,6 @@ public class Manager : MonoBehaviour
 
     private static Manager _instance;
     private const string SaveFileNameWithExtensionWithPrecedingBlackSlash = @"\dummy_fighter.sav";
-    private const string SaveFolderNameWithPrecedingBlackSlash = @"\Assets\StreamingAssets";
-    private string _currentDirectory;
     private string _absoluteFilePath;
     private const int TotalNumberOfLinks = 4;
     private GameObject[] _links;
@@ -62,12 +60,7 @@ public class Manager : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        _currentDirectory = Directory.GetCurrentDirectory();
-        if (!Directory.Exists(_currentDirectory + SaveFolderNameWithPrecedingBlackSlash))
-        {
-            Directory.CreateDirectory(_currentDirectory + SaveFolderNameWithPrecedingBlackSlash);
-        }
-        _absoluteFilePath = _currentDirectory + SaveFolderNameWithPrecedingBlackSlash +
+        _absoluteFilePath = Application.streamingAssetsPath +
                                SaveFileNameWithExtensionWithPrecedingBlackSlash;
         _links = new GameObject[TotalNumberOfLinks];
         _links[0] = GameObject.Find("LinkThink");
